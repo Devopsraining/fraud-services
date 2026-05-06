@@ -1,0 +1,97 @@
+name: CI/CD Generator Service
+
+on:
+  push:
+    paths:
+      - 'generator/**'
+    branches: [ "main", "feature" ]
+
+env:
+  REGISTRY: gcr.io
+  PROJECT: devops-492107
+  APP: generator
+
+jobs:
+#   sonar-analysis:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - uses: actions/checkout@v4
+
+#       - name: SonarQube Scan
+#         uses: SonarSource/sonarqube-scan-action@v2
+#         with:
+#           args: >
+#             -Dsonar.projectKey=generator
+#             -Dsonar.sources=generator
+#             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+#             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+#       - name: Quality Gate
+#         uses: SonarSource/sonarqube-quality-gate-action@v1
+#         timeout-minutes: 5
+#         env:
+#           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+# ---
+
+  build-and-push:
+    # needs: sonar-analysis
+    runs-on: ubuntu-latest
+
+    outputs:
+      tagname: ${{ steps.tag.outputs.tagname }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate Tag
+        id: tag
+        run: echo "tagname=${GITHUB_RUN_NUMBER}" >> $GITHUB_OUTPUT
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GIT_TOKEN }}
+
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker --quiet
+
+      - name: Build Image
+        run: |
+          docker build ./generator \
+          -f generator/Dockerfile \
+          -t $REGISTRY/$PROJECT/$APP:${{ steps.tag.outputs.tagname }}
+
+      - name: Push Image
+        run: |
+          docker push $REGISTRY/$PROJECT/$APP:${{ steps.tag.outputs.tagname }}
+
+# ---
+
+  update-helm:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Helm Repo
+        uses: actions/checkout@v3
+        with:
+          repository: venkatesharelly/fraud-helm
+          token: ${{ secrets.GIT_PAT }}
+
+      - name: Update values.yaml
+        uses: fjogeleit/yaml-update-action@main
+        with:
+          valueFile: 'generator/values.yaml'
+          repository: venkatesharelly/fraud-helm
+          token: ${{ secrets.GIT_PAT }}
+          propertyPath: 'image.tag'
+          value: ${{ needs.build-and-push.outputs.tagname }}
+          branch: main
+          commitChange: true
+          createPR: false
+          message: "Update Generator image tag to ${{ needs.build-and-push.outputs.tagname }}"
