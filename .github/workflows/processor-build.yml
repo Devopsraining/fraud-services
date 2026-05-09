@@ -67,7 +67,7 @@ jobs:
         run: |
           docker push $REGISTRY/$PROJECT/$APP:${{ steps.tag.outputs.tagname }}
 
-# ---
+## ---
 
   update-helm:
     needs: build-and-push
@@ -77,19 +77,18 @@ jobs:
       - name: Checkout Helm Repo
         uses: actions/checkout@v3
         with:
-          repository: Devopstraining/fraud-helm
+          repository: Devopsraining/fraud-helm
           token: ${{ secrets.GIT_PAT }}
-          path: fraud-helm
 
       - name: Update values.yaml
         uses: fjogeleit/yaml-update-action@main
         with:
           valueFile: 'processor/values.yaml'
-          repository: Devopstraining/fraud-helm
+          repository: Devopsraining/fraud-helm
           token: ${{ secrets.GIT_PAT }}
           propertyPath: 'image.tag'
           value: ${{ needs.build-and-push.outputs.tagname }}
           branch: main
           commitChange: true
           createPR: false
-          message: "Update ML image tag to ${{ needs.build-and-push.outputs.tagname }}"
+          message: "Update Generator image tag to ${{ needs.build-and-push.outputs.tagname }}"
