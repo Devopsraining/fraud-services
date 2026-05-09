@@ -77,7 +77,7 @@ jobs:
       - name: Checkout Helm Repo
         uses: actions/checkout@v3
         with:
-          repository: Devopsraining/fraud-helm
+          repository: Devopstraining/fraud-helm
           token: ${{ secrets.GIT_PAT }}
           path: fraud-helm
 
@@ -85,7 +85,7 @@ jobs:
         uses: fjogeleit/yaml-update-action@main
         with:
           valueFile: 'processor/values.yaml'
-          repository: Devopsraining/fraud-helm
+          repository: Devopstraining/fraud-helm
           token: ${{ secrets.GIT_PAT }}
           propertyPath: 'image.tag'
           value: ${{ needs.build-and-push.outputs.tagname }}
