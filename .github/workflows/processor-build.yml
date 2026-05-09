@@ -86,7 +86,7 @@ jobs:
         with:
           valueFile: 'fraud-helm/processor/values.yaml'
           repository: Devopsraining/fraud-helm
-          token: ${{ secrets.GIT_TOKEN }}
+          token: ${{ secrets.GIT_PAT }}
           propertyPath: 'image.tag'
           value: ${{ needs.build-and-push.outputs.tagname }}
           branch: main
