@@ -69,27 +69,27 @@ jobs:
 
 # ---
 
-#   update-helm:
-#     needs: build-and-push
-#     runs-on: ubuntu-latest
+  update-helm:
+    needs: build-and-push
+    runs-on: ubuntu-latest
 
-#     steps:
-#       - name: Checkout Helm Repo
-#         uses: actions/checkout@v3
-#         with:
-#           repository: venkatesharelly/fraud-helm
-#           token: ${{ secrets.GIT_TOKEN }}
-#           path: fraud-helm
+    steps:
+      - name: Checkout Helm Repo
+        uses: actions/checkout@v3
+        with:
+          repository: Devopsraining/fraud-helm
+          token: ${{ secrets.GIT_TOKEN }}
+          path: fraud-helm
 
-#       - name: Update values.yaml
-#         uses: fjogeleit/yaml-update-action@main
-#         with:
-#           valueFile: 'fraud-helm/processor/values.yaml'
-#           repository: venkatesharelly/fraud-helm
-#           token: ${{ secrets.GIT_TOKEN }}
-#           propertyPath: 'image.tag'
-#           value: ${{ needs.build-and-push.outputs.tagname }}
-#           branch: main
-#           commitChange: true
-#           createPR: false
-#           message: "Update ML image tag to ${{ needs.build-and-push.outputs.tagname }}"
+      - name: Update values.yaml
+        uses: fjogeleit/yaml-update-action@main
+        with:
+          valueFile: 'fraud-helm/processor/values.yaml'
+          repository: Devopsraining/fraud-helm
+          token: ${{ secrets.GIT_TOKEN }}
+          propertyPath: 'image.tag'
+          value: ${{ needs.build-and-push.outputs.tagname }}
+          branch: main
+          commitChange: true
+          createPR: false
+          message: "Update ML image tag to ${{ needs.build-and-push.outputs.tagname }}"
