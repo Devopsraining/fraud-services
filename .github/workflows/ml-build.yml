@@ -37,6 +37,9 @@ jobs:
     # needs: sonar-analysis
     runs-on: ubuntu-latest
 
+    outputs:
+      tagname: ${{ steps.tag.outputs.tagname }}
+
     steps:
       - uses: actions/checkout@v4
 
