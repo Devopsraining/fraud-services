@@ -75,7 +75,6 @@ jobs:
         with:
           repository: Devopsraining/fraud-helm
           token: ${{ secrets.GIT_PAT }}
-          path: fraud-helm
 
       - name: Update values.yaml
         uses: fjogeleit/yaml-update-action@main
