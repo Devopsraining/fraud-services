@@ -73,7 +73,7 @@ jobs:
       - name: Checkout Helm Repo
         uses: actions/checkout@v3
         with:
-          repository: venkatesharelly/fraud-helm
+          repository: Devopsraining/fraud-helm
           token: ${{ secrets.GIT_TOKEN }}
           path: fraud-helm
 
@@ -81,7 +81,7 @@ jobs:
         uses: fjogeleit/yaml-update-action@main
         with:
           valueFile: 'fraud-helm/ml-service/values.yaml'
-          repository: venkatesharelly/fraud-helm
+          repository: Devopsraining/fraud-helm
           token: ${{ secrets.GIT_TOKEN }}
           propertyPath: 'image.tag'
           value: ${{ needs.build-and-push.outputs.tagname }}
