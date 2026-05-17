@@ -80,7 +80,7 @@ jobs:
       - name: Update values.yaml
         uses: fjogeleit/yaml-update-action@main
         with:
-          valueFile: 'fraud-helm/ml-service/values.yaml'
+          valueFile: 'ml-service/values.yaml'
           repository: Devopsraining/fraud-helm
           token: ${{ secrets.GIT_PAT }}
           propertyPath: 'image.tag'
